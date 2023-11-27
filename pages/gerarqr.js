@@ -96,6 +96,7 @@ function GerarQRCode({ initialQr, initialCode }) {
           const newCode = await json.find.code;
           setQR(newQR);
           setCode(newCode);
+          setDisabled(false);
         } catch (err) {
           console.log(err);
           if (errors.length > 0 || warnings.length > 0) {

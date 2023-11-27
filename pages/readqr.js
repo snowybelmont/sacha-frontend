@@ -1,32 +1,15 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Router from "next/router";
-import dynamic from "next/dynamic";
+import jsQR from "jsqr";
 import { getCookie, setCookie } from "cookies-next";
 import Logo from "@/components/Logo";
-
-const QrScanner = dynamic(() => import("react-qr-scanner"), { ssr: false });
+import QRCodeScanner from "@/components/ReadQR";
 
 const ReadQRCode = () => {
-  const [result, setResult] = useState();
   const [Disabled, setDisabled] = useState(false);
-  const [Camera, setCamera] = useState(false);
 
-  const handleScan = (data) => {
-    if (data) {
-      setResult(data.text);
-    }
-  };
-
-  const handleError = (err) => {
-    console.error(err);
-  };
-
-  const videoConstraints = {
-    facingMode: Camera ? "user" : "environment",
-  };
-
-  const toggleCamera = () => {
-    setCamera((prev) => !prev);
+  const handleScan = (result) => {
+    console.log("QR Code lido:", result.data);
   };
 
   const displayAlert = (errors, warnings) => {
@@ -82,26 +65,11 @@ const ReadQRCode = () => {
       <div className="container-fluid">
         <Logo />
         <div id="container-alerts"></div>
-        <div
-          className="d-flex flex-column"
-          style={{
-            width: "300px",
-            height: "300px",
-            aspectRatio: "1/1",
-          }}
-        >
-          <QrScanner
-            className="mb-3"
-            onScan={handleScan}
-            onError={handleError}
-            style={{ width: "100%" }}
-            videoConstraints={videoConstraints}
-          />
-          <p>Resultado: {result}</p>
+        <div className="d-flex flex-column">
+          <QRCodeScanner onScan={handleScan} />
           <button
             id="toggle"
             className="red btn btn-primary btn-lg fw-bold me-3 w-100"
-            onClick={toggleCamera}
           >
             Alternar Câmera
           </button>
