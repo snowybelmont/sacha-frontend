@@ -119,8 +119,8 @@ function Login() {
 
       const createUserOrLogin = async () => {
         try {
-          const URL = "http://localhost:3001/users";
-          const response = await fetch(`${URL}/create`, {
+          const URL = "https://projeto-sacha.onrender.com";
+          const response = await fetch(`${URL}/users/create`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -244,7 +244,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
   try {
     if (token) {
-      const URL = process.env.URL ?? "http://localhost:3001";
+      const URL = "https://projeto-sacha.onrender.com";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {

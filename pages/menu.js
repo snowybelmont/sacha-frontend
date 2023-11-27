@@ -48,8 +48,8 @@ function Menu({ returnType }) {
     if (event.target.id === "generateQR") {
       const qrGen = async () => {
         try {
-          const URL = "http://localhost:3001/qrcode";
-          const response = await fetch(`${URL}/generate`, {
+          const URL = "https://projeto-sacha.onrender.com";
+          const response = await fetch(`${URL}/qrcode/generate`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -59,8 +59,8 @@ function Menu({ returnType }) {
 
           if (!response.ok) {
             try {
-              const URL = "http://localhost:3001/users";
-              const response = await fetch(`${URL}/single?id=${token}`);
+              const URL = "https://projeto-sacha.onrender.com";
+              const response = await fetch(`${URL}/users/single?id=${token}`);
 
               if (!response.ok) {
                 throw new Error("Usuário não encontrado");
@@ -204,7 +204,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
   try {
     if (token) {
-      const URL = process.env.URL ?? "http://localhost:3001";
+      const URL = "https://projeto-sacha.onrender.com";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {

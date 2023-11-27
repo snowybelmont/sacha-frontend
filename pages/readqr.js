@@ -44,7 +44,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
   try {
     if (token) {
-      const URL = process.env.URL ?? "http://localhost:3001";
+      const URL = "https://projeto-sacha.onrender.com/";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {

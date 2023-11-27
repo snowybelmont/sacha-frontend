@@ -56,8 +56,8 @@ function GerarQRCode({ initialQr }) {
     } else if (event.target.id === "refresh") {
       const qrGen = async () => {
         try {
-          const URL = "http://localhost:3001/qrcode";
-          const response = await fetch(`${URL}/generate`, {
+          const URL = "https://projeto-sacha.onrender.com";
+          const response = await fetch(`${URL}/qrcode/generate`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -67,8 +67,8 @@ function GerarQRCode({ initialQr }) {
 
           if (!response.ok) {
             try {
-              const URL = "http://localhost:3001/users";
-              const response = await fetch(`${URL}/single?id=${token}`);
+              const URL = "https://projeto-sacha.onrender.com";
+              const response = await fetch(`${URL}/users/single?id=${token}`);
 
               if (!response.ok) {
                 throw new Error("Usuário não encontrado");
@@ -177,7 +177,7 @@ export const getServerSideProps = async ({ req, res }) => {
       };
     }
     if (token) {
-      const URL = process.env.URL ?? "http://localhost:3001";
+      const URL = "https://projeto-sacha.onrender.com";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {
@@ -195,7 +195,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
       const searchQR = async () => {
         try {
-          const URL = process.env.URL ?? "http://localhost:3001";
+          const URL = "https://projeto-sacha.onrender.com";
           const response = await fetch(`${URL}/qrcode/single?id=${qrcode}`);
 
           if (!response.ok) {
