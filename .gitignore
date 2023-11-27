@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /.pnp
+/.pnp/
 .pnp.js
 .yarn/install-state.gz
 
@@ -10,10 +11,13 @@
 /coverage
 
 # next.js
+.next/
 /.next/
 /out/
 
 # production
+dist/
+build/
 /build
 
 # misc
@@ -21,12 +25,15 @@
 *.pem
 
 # debug
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# env files
 .env*.local
+.env.local
+.env.production
 
 # vercel
 .vercel
@@ -34,3 +41,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+.vscode/
+
+# Editor files
+*.swp
+*.swo
+*.swn
+
+# Package files
+package-lock.json

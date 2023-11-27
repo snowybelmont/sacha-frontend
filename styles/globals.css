@@ -1,0 +1,36 @@
+body {
+    min-height: 100dvh;
+    background-color: #f0ecec !important;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.red {
+    background-color: #ff3434 !important;
+    border-color: #ff3434 !important;
+}
+
+.red:hover {
+    background-color: #d52f2f !important;
+    border-color: #d52f2f !important;
+}
+
+.red-text {
+    color: #ff3434 !important;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+#generateQR,
+#rollCall,
+#analysis,
+#calendar,
+#readQR,
+#grades,
+#absences {
+    min-height: 4em;
+}
