@@ -9,6 +9,7 @@ const QrScanner = dynamic(() => import("react-qr-scanner"), { ssr: false });
 const ReadQRCode = () => {
   const [result, setResult] = useState();
   const [Disabled, setDisabled] = useState(false);
+  const [Camera, setCamera] = useState(false);
 
   const handleScan = (data) => {
     if (data) {
@@ -21,7 +22,11 @@ const ReadQRCode = () => {
   };
 
   const videoConstraints = {
-    facingMode: "environment",
+    facingMode: Camera ? "user" : "environment",
+  };
+
+  const toggleCamera = () => {
+    setCamera((prev) => !prev);
   };
 
   const displayAlert = (errors, warnings) => {
@@ -76,20 +81,6 @@ const ReadQRCode = () => {
     <div className="container py-4 text-center">
       <div className="container-fluid">
         <Logo />
-        <div className="d-flex text-center justify-content-center align-items-center mb-3">
-          {Disabled ? (
-            <i
-              id="home"
-              className="bi bi-house-door-fill red-text fs-1 disable-icon"
-            ></i>
-          ) : (
-            <i
-              id="home"
-              className="bi bi-house-door-fill red-text fs-1 cursor"
-              onClick={handleClick}
-            ></i>
-          )}
-        </div>
         <div id="container-alerts"></div>
         <div
           className="d-flex flex-column"
@@ -107,6 +98,27 @@ const ReadQRCode = () => {
             videoConstraints={videoConstraints}
           />
           <p>Resultado: {result}</p>
+          <button
+            id="toggle"
+            className="red btn btn-primary btn-lg fw-bold me-3 w-100"
+            onClick={toggleCamera}
+          >
+            Alternar Câmera
+          </button>
+          <div className="d-flex text-center justify-content-center align-items-center mb-3">
+            {Disabled ? (
+              <i
+                id="home"
+                className="bi bi-house-door-fill red-text fs-1 disable-icon"
+              ></i>
+            ) : (
+              <i
+                id="home"
+                className="bi bi-house-door-fill red-text fs-1 cursor"
+                onClick={handleClick}
+              ></i>
+            )}
+          </div>
         </div>
       </div>
     </div>
