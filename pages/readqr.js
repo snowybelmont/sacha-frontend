@@ -44,7 +44,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
   try {
     if (token) {
-      const URL = "https://projeto-sacha.onrender.com/";
+      const URL = "https://projeto-sacha.onrender.com";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {
@@ -65,11 +65,11 @@ export const getServerSideProps = async ({ req, res }) => {
   } catch (err) {
     console.log(err);
     return {
+      props: {},
       redirect: {
         permanent: false,
         destination: "/login",
       },
-      props: {},
     };
   }
 
