@@ -1,6 +1,6 @@
 import Router from "next/router";
 import { useState } from "react";
-import { getCookie, setCookie } from "cookies-next";
+import { getCookie, setCookie, deleteCookie } from "cookies-next";
 import Logo from "@/components/Logo";
 
 function Login() {
@@ -146,6 +146,7 @@ function Login() {
           }
 
           setCookie("token", json.token);
+          deleteCookie("qrcode");
 
           Router.push("/menu");
         } catch (err) {

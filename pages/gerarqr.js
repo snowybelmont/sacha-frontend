@@ -1,11 +1,12 @@
 import Router from "next/router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { getCookie, setCookie } from "cookies-next";
 import Logo from "@/components/Logo";
 
-function GerarQRCode({ initialQr }) {
+function GerarQRCode({ initialQr, initialCode }) {
   const [Disabled, setDisabled] = useState(false);
   const [qr, setQR] = useState(initialQr);
+  const [code, setCode] = useState(initialCode);
 
   const displayAlert = (errors, warnings) => {
     const container = document.getElementById("container-alerts");
@@ -92,7 +93,9 @@ function GerarQRCode({ initialQr }) {
           const newQR = await json.find.qrcode
             .replace(/\n/g, "")
             .replace(/\\/g, "");
+          const newCode = await json.find.code;
           setQR(newQR);
+          setCode(newCode);
         } catch (err) {
           console.log(err);
           if (errors.length > 0 || warnings.length > 0) {
@@ -111,6 +114,14 @@ function GerarQRCode({ initialQr }) {
       <div className="container-fluid">
         <Logo />
         <div className="d-flex flex-column mb-3">
+          <input
+            className="form-control form-control-lg mb-3"
+            type="text"
+            placeholder="Não foi possível carregar o valor"
+            value={code ?? "Não foi possível carregar o valor"}
+            aria-label=".form-control-lg example"
+            readOnly
+          />
           {qr ? (
             <div dangerouslySetInnerHTML={{ __html: qr }} />
           ) : (
@@ -130,26 +141,24 @@ function GerarQRCode({ initialQr }) {
           {Disabled ? (
             <i
               id="home"
-              className="bi bi-house-door-fill red-text fs-1 me-3 cursor disable-icon"
-              onClick={handleClick}
+              className="bi bi-house-door-fill red-text fs-1 me-4 disable-icon"
             ></i>
           ) : (
             <i
               id="home"
-              className="bi bi-house-door-fill red-text fs-1 me-3 cursor"
+              className="bi bi-house-door-fill red-text fs-1 me-4 cursor"
               onClick={handleClick}
             ></i>
           )}
           {Disabled ? (
             <i
               id="refresh"
-              className="bi bi-arrow-clockwise red-text fs-1 mt-1 cursor disable-icon"
-              onClick={handleClick}
+              className="bi bi-arrow-clockwise red-text mt-1 disable-icon"
             ></i>
           ) : (
             <i
               id="refresh"
-              className="bi bi-arrow-clockwise red-text fs-1 mt-1 cursor"
+              className="bi bi-arrow-clockwise red-text mt-1 cursor"
               onClick={handleClick}
             ></i>
           )}
@@ -165,6 +174,7 @@ export const getServerSideProps = async ({ req, res }) => {
   const token = getCookie("token", { req, res });
   const qrcode = getCookie("qrcode", { req, res });
   let initialQr = null;
+  let initialCode = null;
 
   try {
     if (!qrcode) {
@@ -208,9 +218,10 @@ export const getServerSideProps = async ({ req, res }) => {
           initialQr = await json.qr.qrcode
             .replace(/\n/g, "")
             .replace(/\\/g, "");
+          initialCode = await json.qr.code;
 
           return {
-            props: { initialQr },
+            props: { initialQr, initialCode },
           };
         } catch (err) {
           console.log(err);
@@ -234,7 +245,7 @@ export const getServerSideProps = async ({ req, res }) => {
   }
 
   return {
-    props: { initialQr },
+    props: { initialQr, initialCode },
   };
 };
 

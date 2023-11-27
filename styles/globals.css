@@ -25,6 +25,10 @@ body {
     cursor: pointer;
 }
 
+.disable-icon {
+    opacity: 0.7;
+}
+
 #generateQR,
 #rollCall,
 #analysis,
@@ -33,4 +37,13 @@ body {
 #grades,
 #absences {
     min-height: 4em;
+}
+
+svg {
+    min-width: 10em;
+}
+
+#home,
+#refresh {
+    font-size: 3em !important;
 }
