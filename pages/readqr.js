@@ -33,9 +33,7 @@ const ReadQRCode = () => {
           <QrScanner
             onScan={handleScan}
             onError={handleError}
-            constraints={{
-              facingMode: "environment",
-            }}
+            facingMode="environment"
           />
           <p>Resultado: {result}</p>
         </div>
