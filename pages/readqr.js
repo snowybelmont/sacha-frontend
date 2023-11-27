@@ -12,12 +12,16 @@ const ReadQRCode = () => {
 
   const handleScan = (data) => {
     if (data) {
-      setResult(data);
+      setResult(data.text);
     }
   };
 
   const handleError = (err) => {
     console.error(err);
+  };
+
+  const videoConstraints = {
+    facingMode: "environment",
   };
 
   const displayAlert = (errors, warnings) => {
@@ -72,24 +76,7 @@ const ReadQRCode = () => {
     <div className="container py-4 text-center">
       <div className="container-fluid">
         <Logo />
-        <div
-          className="d-flex flex-column mb-3"
-          style={{
-            width: "300px",
-            height: "300px",
-            aspectRatio: "1/1",
-          }}
-        >
-          <QrScanner
-            className="mb-3"
-            onScan={handleScan}
-            onError={handleError}
-            style={{ width: "100%" }}
-            facingMode="environment"
-          />
-          <p>Resultado: {result}</p>
-        </div>
-        <div className="d-flex text-center justify-content-center align-items-center">
+        <div className="d-flex text-center justify-content-center align-items-center mb-3">
           {Disabled ? (
             <i
               id="home"
@@ -104,6 +91,23 @@ const ReadQRCode = () => {
           )}
         </div>
         <div id="container-alerts"></div>
+        <div
+          className="d-flex flex-column"
+          style={{
+            width: "300px",
+            height: "300px",
+            aspectRatio: "1/1",
+          }}
+        >
+          <QrScanner
+            className="mb-3"
+            onScan={handleScan}
+            onError={handleError}
+            style={{ width: "100%" }}
+            videoConstraints={videoConstraints}
+          />
+          <p>Resultado: {result}</p>
+        </div>
       </div>
     </div>
   );
