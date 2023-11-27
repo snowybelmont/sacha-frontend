@@ -68,12 +68,12 @@ const ReadQRCode = () => {
         <div className="d-flex flex-column">
           <QRCodeScanner onScan={handleScan} />
           <button
-            id="toggle"
-            className="red btn btn-primary btn-lg fw-bold me-3 w-100"
+            id="writeCode"
+            className="red btn btn-primary btn-lg fw-bold mt-3 me-3 mb-2 w-100"
           >
-            Alternar Câmera
+            Digitar Código
           </button>
-          <div className="d-flex text-center justify-content-center align-items-center mb-3">
+          <div className="d-flex text-center justify-content-center align-items-center">
             {Disabled ? (
               <i
                 id="home"
