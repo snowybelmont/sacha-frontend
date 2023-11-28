@@ -1,6 +1,7 @@
 import Router from "next/router";
 import { useState } from "react";
 import { getCookie, setCookie, deleteCookie } from "cookies-next";
+import nProgress from "nprogress";
 import Logo from "@/components/Logo";
 
 function Login() {
@@ -67,6 +68,7 @@ function Login() {
   };
 
   const handleClick = (event) => {
+    nProgress.start();
     let errors = [];
     let warnings = [];
 
@@ -138,7 +140,6 @@ function Login() {
             errors.push("Você não é um aluno");
           } else if (json.message === "Tipo incorreto (professor)") {
             errors.push("Você não é um professor");
-            console.log("Teste 2");
           }
 
           if (errors.length > 0 || warnings.length > 0) {
@@ -148,6 +149,7 @@ function Login() {
           setCookie("token", json.token);
           deleteCookie("qrcode");
 
+          nProgress.done();
           Router.push("/menu");
         } catch (err) {
           console.log(err);
@@ -156,6 +158,7 @@ function Login() {
           }
           document.getElementById("back").classList.remove("disabled");
           document.getElementById("submit").classList.remove("disabled");
+          nProgress.done();
         }
       };
 
@@ -166,11 +169,13 @@ function Login() {
         displayAlert(errors, warnings);
 
         if (errors[0] === "Nenhum tipo definido. Recarregue a página!") {
+          nProgress.done();
           return;
         }
       }
       document.getElementById("back").classList.remove("disabled");
       document.getElementById("submit").classList.remove("disabled");
+      nProgress.done();
     }
   };
 

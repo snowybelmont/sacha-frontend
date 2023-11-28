@@ -35,7 +35,8 @@ body {
 #calendar,
 #readQR,
 #grades,
-#absences {
+#absences,
+#write {
     min-height: 4em;
 }
 
@@ -44,6 +45,7 @@ svg {
 }
 
 #home,
-#refresh {
+#refresh,
+#backi {
     font-size: 3em !important;
 }

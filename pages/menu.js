@@ -1,6 +1,7 @@
 import Router from "next/router";
 import { useState } from "react";
 import { getCookie, setCookie, deleteCookie } from "cookies-next";
+import nProgress from "nprogress";
 import Logo from "@/components/Logo";
 
 function Menu({ returnType }) {
@@ -38,6 +39,7 @@ function Menu({ returnType }) {
   };
 
   const handleClick = (event) => {
+    nProgress.start();
     const token = getCookie("token");
     let errors = [];
     let warnings = [];
@@ -81,6 +83,7 @@ function Menu({ returnType }) {
 
           const json = await response.json();
           setCookie("qrcode", json.find._id);
+          nProgress.done();
           Router.push("/gerarqr");
         } catch (err) {
           console.log(err);
@@ -88,6 +91,7 @@ function Menu({ returnType }) {
             displayAlert(errors, warnings);
           }
           document.getElementById("generateQR").classList.remove("disabled");
+          nProgress.done();
         }
       };
 
@@ -95,13 +99,16 @@ function Menu({ returnType }) {
     } else if (event.target.id === "readQR") {
       try {
         document.getElementById(event.target.id).classList.add("disabled");
+        nProgress.done();
         Router.push("/readqr");
       } catch (err) {
         console.log(err);
         document.getElementById("readQR").classList.add("disabled");
+        nProgress.done();
       }
     }
   };
+
   return (
     <>
       {TypeViewTeacher ? (

@@ -1,15 +1,12 @@
-import React, { useState } from "react";
 import Router from "next/router";
+import React, { useState } from "react";
 import Fingerprint2 from "fingerprintjs2";
 import { getCookie, setCookie } from "cookies-next";
-import Logo from "@/components/Logo";
 import nProgress from "nprogress";
-import QRCodeScanner from "@/components/ReadQR";
+import Logo from "@/components/Logo";
 
-const ReadQRCode = ({ token, finger }) => {
+function WriteCode({ token, finger }) {
   const [Disabled, setDisabled] = useState(false);
-  const [CameraReady, setCameraReady] = useState(true);
-  const [CameraRead, setCameraRead] = useState(false);
   let code;
 
   const displayAlert = (errors, warnings) => {
@@ -43,50 +40,35 @@ const ReadQRCode = ({ token, finger }) => {
     }
   };
 
-  const handleScan = (result) => {
-    console.log("QR Code lido:", result.data);
-
-    return (code = result.data);
-  };
-
-  const handleClick = (event) => {
+  const handleClick = async () => {
     nProgress.start();
     let errors = [];
     let warnings = [];
 
     document.getElementById("container-alerts").innerHTML = "";
-    document.getElementById("writeCode").classList.add("disabled");
-    document.getElementById("confirm").classList.add("disabled");
+    document.getElementById("submit").classList.add("disabled");
     setDisabled(true);
-    setCameraRead(true);
 
-    if (event.target.id === "home") {
+    if (event.target.id === "backi") {
       try {
-        Router.push("/menu");
+        Router.push("/readqr");
       } catch (err) {
         console.log(err);
         setDisabled(false);
       }
-    } else if (event.target.id === "writeCode") {
-      try {
-        Router.push("/writecode");
-      } catch (err) {
-        console.log(err);
-        setDisabled(false);
-      }
-    } else if (event.target.id === "confirm") {
+    } else if (event.target.id === "submit") {
       try {
         if (getCookie("type") !== "aluno") {
           errors.push("Nenhum tipo definido. Recarregue a página!");
-          setCameraRead(false);
-          setCameraReady(false);
           throw new Error("Tipo indefinido");
         }
 
-        if (!code) {
+        if (!document.getElementById("wcode").value) {
           errors.push("Nenhum código identificado");
           throw new Error("Código invalido");
         }
+
+        code = document.getElementById("wcode").value;
 
         const presenceObj = {
           token: token,
@@ -94,7 +76,7 @@ const ReadQRCode = ({ token, finger }) => {
           fingerprint: finger,
         };
 
-        const read = async () => {
+        const write = async () => {
           try {
             const URL = "https://projeto-sacha.onrender.com";
 
@@ -106,7 +88,6 @@ const ReadQRCode = ({ token, finger }) => {
               errors.push(
                 "Você já registrou sua presença nesse dispositivo hoje"
               );
-              setCameraRead(false);
               throw new Error("Não pode prosseguir");
             } else if (presence.status !== 200) {
               errors.push("Error ao registrar presença");
@@ -133,22 +114,19 @@ const ReadQRCode = ({ token, finger }) => {
             if (jsonResponse.message === "Presença Registrada") {
               const container = document.getElementById("container-alerts");
               container.innerHTML += `<div class="alert alert-success text-start alert-dismissible" role="alert">
-              Sua presença foi registrada no sistema
-          </div>`;
+                  Sua presença foi registrada no sistema
+              </div>`;
             }
 
-            setCameraRead(false);
             setDisabled(false);
+            document.getElementById("submit").classList.remove("disabled");
             nProgress.done();
           } catch (err) {
             console.log(err);
             if (errors.length > 0 || warnings.length > 0) {
               displayAlert(errors, warnings);
 
-              if (
-                errors[0] === "Nenhum tipo definido. Recarregue a página!" ||
-                errors[0] === "Permissão de Geolocalização não encontrada!"
-              ) {
+              if (errors[0] === "Nenhum tipo definido. Recarregue a página!") {
                 nProgress.done();
                 return;
               } else if (
@@ -158,37 +136,21 @@ const ReadQRCode = ({ token, finger }) => {
                 setDisabled(false);
                 nProgress.done();
                 return;
-              } else if (
-                errors[0] ===
-                "Nenhuma câmera disponível, utilize o código para registrar sua presença"
-              ) {
-                document
-                  .getElementById("writeCode")
-                  .classList.remove("disabled");
-                setDisabled(false);
-                nProgress.done();
-                return;
               }
             }
-            document.getElementById("confirm").classList.remove("disabled");
-            document.getElementById("writeCode").classList.remove("disabled");
-            setCameraRead(false);
+            document.getElementById("submit").classList.remove("disabled");
             setDisabled(false);
             nProgress.done();
           }
         };
 
-        read();
+        write();
       } catch (err) {
         console.log(err);
-        setCameraRead(false);
         if (errors.length > 0 || warnings.length > 0) {
           displayAlert(errors, warnings);
 
-          if (
-            errors[0] === "Nenhum tipo definido. Recarregue a página!" ||
-            errors[0] === "Permissão de Geolocalização não encontrada!"
-          ) {
+          if (errors[0] === "Nenhum tipo definido. Recarregue a página!") {
             nProgress.done();
             return;
           } else if (
@@ -198,18 +160,9 @@ const ReadQRCode = ({ token, finger }) => {
             setDisabled(false);
             nProgress.done();
             return;
-          } else if (
-            errors[0] ===
-            "Nenhuma câmera disponível, utilize o código para registrar sua presença"
-          ) {
-            document.getElementById("writeCode").classList.remove("disabled");
-            setDisabled(false);
-            nProgress.done();
-            return;
           }
         }
-        document.getElementById("confirm").classList.remove("disabled");
-        document.getElementById("writeCode").classList.remove("disabled");
+        document.getElementById("submit").classList.remove("disabled");
         setDisabled(false);
         nProgress.done();
       }
@@ -220,61 +173,42 @@ const ReadQRCode = ({ token, finger }) => {
     <div className="container py-4 text-center">
       <div className="container-fluid">
         <Logo />
-        <div id="container-alerts"></div>
-        <div className="d-flex flex-column text-center justify-content-center align-items-center mb-2">
-          {CameraReady ? (
-            <>
-              {CameraRead ? (
-                <div className="spinner-border text-danger" role="status">
-                  <span className="visually-hidden">Carregando...</span>
-                </div>
-              ) : (
-                <QRCodeScanner onScan={handleScan} />
-              )}
-            </>
-          ) : (
-            <div id="container-alerts">
-              <div
-                className="alert alert-danger text-start alert-dismissible"
-                role="alert"
-              >
-                Câmera indisponível
-              </div>
-            </div>
-          )}
-          <button
-            id="confirm"
-            className="red btn btn-primary btn-lg fw-bold mt-3 w-100"
-            onClick={handleClick}
-          >
-            Confirmar
-          </button>
-          <button
-            id="writeCode"
-            className="red btn btn-primary btn-lg fw-bold mt-3 mb-2 w-100"
-            onClick={handleClick}
-          >
-            Digitar Código
-          </button>
-          <div className="d-flex text-center justify-content-center align-items-center">
-            {Disabled ? (
-              <i
-                id="home"
-                className="bi bi-house-door-fill red-text fs-1 disable-icon"
-              ></i>
-            ) : (
-              <i
-                id="home"
-                className="bi bi-house-door-fill red-text fs-1 cursor"
-                onClick={handleClick}
-              ></i>
-            )}
-          </div>
+        <div className="d-flex flex-column mb-3">
+          <input
+            id="wcode"
+            className="form-control form-control-lg"
+            type="text"
+            placeholder="Digite o código do QR Code"
+            aria-label="Digite o código do QR Code"
+            disabled={Disabled}
+          />
         </div>
+        <button
+          id="submit"
+          className="red btn btn-primary btn-lg fw-bold me-3 mb-2 w-100"
+          onClick={handleClick}
+        >
+          Enviar
+        </button>
+        <div className="d-flex text-center justify-content-center align-items-center">
+          {Disabled ? (
+            <i
+              id="backi"
+              className="bi bi-arrow-left-circle-fill red-text fs-1 disable-icon"
+            ></i>
+          ) : (
+            <i
+              id="backi"
+              className="bi bi-arrow-left-circle-fill red-text fs-1 cursor"
+              onClick={handleClick}
+            ></i>
+          )}
+        </div>
+        <div id="container-alerts"></div>
       </div>
     </div>
   );
-};
+}
 
 export const getServerSideProps = async ({ req, res }) => {
   const type = getCookie("type", { req, res });
@@ -312,7 +246,7 @@ export const getServerSideProps = async ({ req, res }) => {
       finger = await getFingerprint();
 
       return {
-        props: { finger, token },
+        props: { token, finger },
       };
     } else {
       throw new Error("Usário não encontrado");
@@ -329,8 +263,8 @@ export const getServerSideProps = async ({ req, res }) => {
   }
 
   return {
-    props: { finger, token },
+    props: { token, finger },
   };
 };
 
-export default ReadQRCode;
+export default WriteCode;
