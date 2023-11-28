@@ -204,6 +204,10 @@ export const getServerSideProps = async ({ req, res }) => {
         setCookie("type", json.formattedData.Tipo, { req, res });
       }
 
+      if (json.formattedData.Tipo !== "professor") {
+        throw new Error("Não é professor");
+      }
+
       const searchQR = async () => {
         try {
           const URL = "https://projeto-sacha.onrender.com";

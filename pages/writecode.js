@@ -233,6 +233,10 @@ export const getServerSideProps = async ({ req, res }) => {
         setCookie("type", json.formattedData.Tipo, { req, res });
       }
 
+      if (json.formattedData.Tipo !== "aluno") {
+        throw new Error("Não é aluno");
+      }
+
       const getFingerprint = async () => {
         return new Promise((resolve, reject) => {
           Fingerprint2.get({}, (components) => {

@@ -49,3 +49,13 @@ svg {
 #backi {
     font-size: 3em !important;
 }
+
+.bg {
+    border-color: black !important;
+    border-width: 1px !important;
+    background-color: transparent !important;
+}
+
+.no-b-top {
+    border-top: none !important;
+}

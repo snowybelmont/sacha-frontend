@@ -45,10 +45,11 @@ function Menu({ returnType }) {
     let warnings = [];
 
     document.getElementById("container-alerts").innerHTML = "";
-    document.getElementById(event.target.id).classList.add("disabled");
 
     if (event.target.id === "generateQR") {
       const qrGen = async () => {
+        document.getElementById("generateQR").classList.add("disabled");
+        document.getElementById("rollCall").classList.add("disabled");
         try {
           const URL = "https://projeto-sacha.onrender.com";
           const response = await fetch(`${URL}/qrcode/generate`, {
@@ -91,19 +92,34 @@ function Menu({ returnType }) {
             displayAlert(errors, warnings);
           }
           document.getElementById("generateQR").classList.remove("disabled");
+          document.getElementById("rollCall").classList.remove("disabled");
           nProgress.done();
         }
       };
 
       qrGen();
     } else if (event.target.id === "readQR") {
+      document.getElementById("readQR").classList.add("disabled");
       try {
-        document.getElementById(event.target.id).classList.add("disabled");
+        document.getElementById("readQR").classList.remove("disabled");
         nProgress.done();
         Router.push("/readqr");
       } catch (err) {
         console.log(err);
-        document.getElementById("readQR").classList.add("disabled");
+        document.getElementById("readQR").classList.remove("disabled");
+        nProgress.done();
+      }
+    } else if (event.target.id === "rollCall") {
+      document.getElementById("generateQR").classList.add("disabled");
+      document.getElementById("rollCall").classList.add("disabled");
+      try {
+        document.getElementById("generateQR").classList.remove("disabled");
+        document.getElementById("rollCall").classList.remove("disabled");
+        nProgress.done();
+        Router.push("/rollcall");
+      } catch (err) {
+        console.log(err);
+        document.getElementById("readQR").classList.remove("disabled");
         nProgress.done();
       }
     }
@@ -128,7 +144,6 @@ function Menu({ returnType }) {
                   id="rollCall"
                   className="red btn btn-primary btn-lg fw-bold w-100"
                   onClick={handleClick}
-                  disabled={true}
                 >
                   Lista de Chamada
                 </button>
