@@ -7,7 +7,6 @@ const QRCodeScanner = ({ onScan }) => {
   const [result, setResult] = useState(null);
   const [facingMode, setFacingMode] = useState("environment");
   const [CameraReady, setCameraReady] = useState(true);
-  const [cameraInUse, setCameraInUse] = useState(true);
 
   useEffect(() => {
     const initializeCamera = async () => {
