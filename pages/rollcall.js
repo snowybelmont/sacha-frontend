@@ -6,6 +6,7 @@ import Logo from "@/components/Logo";
 
 function RollCall({ token }) {
   const [presences, setPresences] = useState([]);
+  const [Disabled, setDisabled] = useState(false);
 
   useEffect(() => {
     const fetchPresences = async () => {
@@ -27,6 +28,22 @@ function RollCall({ token }) {
     fetchPresences();
   }, []);
 
+  const handleClick = (event) => {
+    nProgress.start();
+
+    setDisabled(true);
+
+    if (event.target.id === "home") {
+      try {
+        nProgress.done();
+        Router.push("/menu");
+      } catch (err) {
+        console.log(err);
+        setDisabled(false);
+      }
+    }
+  };
+
   return (
     <div className="container py-4 text-center">
       <div className="container-fluid">
@@ -39,6 +56,20 @@ function RollCall({ token }) {
                 ra={presence.estudant_RA}
               />
             ))}
+          </div>
+          <div className="d-flex text-center justify-content-center align-items-center">
+            {Disabled ? (
+              <i
+                id="home"
+                className="bi bi-house-door-fill red-text fs-1 disable-icon"
+              ></i>
+            ) : (
+              <i
+                id="home"
+                className="bi bi-house-door-fill red-text fs-1 cursor"
+                onClick={handleClick}
+              ></i>
+            )}
           </div>
         </div>
       </div>
