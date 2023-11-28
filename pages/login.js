@@ -18,7 +18,7 @@ function Login() {
 
     setFormData({
       ...FormData,
-      email: `${emailField.value}@fatec.sp.gov.br`,
+      email: `${emailField.value}`,
       password: passwordField.value,
     });
   };
@@ -107,14 +107,6 @@ function Login() {
         }
       }
 
-      if (
-        emailField.value.toLowerCase().includes("@") ||
-        emailField.value.toLowerCase().includes("fatec") ||
-        emailField.value.toLowerCase().includes("sp.gov.br")
-      ) {
-        warnings.push("Não é necessário adicionar o domínio ao email");
-      }
-
       if (errors.length > 0 || warnings.length > 0) {
         throw new Error("Não pode prosseguir");
       }
@@ -190,17 +182,11 @@ function Login() {
               id="email"
               onChange={updateValue}
               className="form-control"
-              placeholder="Email"
+              placeholder="Digite o seu e-mail"
               aria-label="Email"
               aria-describedby="basic-addon2"
               disabled={Disable}
             />
-            <span
-              className="red-text input-group-text fw-semibold"
-              id="basic-addon2"
-            >
-              @fatec.sp.gov.br
-            </span>
           </div>
           <div className="input-group input-group-lg mb-3">
             <input
@@ -208,7 +194,7 @@ function Login() {
               id="password"
               onChange={updateValue}
               className="form-control"
-              placeholder="Senha"
+              placeholder="Digite a sua senha"
               aria-label="Senha"
               aria-describedby="basic-addon1"
               disabled={Disable}
