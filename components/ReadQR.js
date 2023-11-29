@@ -62,6 +62,7 @@ const QRCodeScanner = ({ onScan }) => {
     setFacingMode((prevMode) =>
       prevMode === "environment" ? "user" : "environment"
     );
+    setCameraReady(true);
   };
 
   return (

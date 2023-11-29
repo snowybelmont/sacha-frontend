@@ -57,7 +57,7 @@ function GerarQRCode({ initialQr, initialCode }) {
     } else if (event.target.id === "refresh") {
       const qrGen = async () => {
         try {
-          const URL = "https://projeto-sacha.onrender.com";
+          const URL = "http://localhost:3001";
           const response = await fetch(`${URL}/qrcode/generate`, {
             method: "POST",
             headers: {
@@ -68,7 +68,7 @@ function GerarQRCode({ initialQr, initialCode }) {
 
           if (!response.ok) {
             try {
-              const URL = "https://projeto-sacha.onrender.com";
+              const URL = "http://localhost:3001";
               const response = await fetch(`${URL}/users/single?id=${token}`);
 
               if (!response.ok) {
@@ -188,7 +188,7 @@ export const getServerSideProps = async ({ req, res }) => {
       };
     }
     if (token) {
-      const URL = "https://projeto-sacha.onrender.com";
+      const URL = "http://localhost:3001";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {
@@ -210,7 +210,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
       const searchQR = async () => {
         try {
-          const URL = "https://projeto-sacha.onrender.com";
+          const URL = "http://localhost:3001";
           const response = await fetch(`${URL}/qrcode/single?id=${qrcode}`);
 
           if (!response.ok) {

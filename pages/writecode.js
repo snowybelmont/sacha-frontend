@@ -78,7 +78,7 @@ function WriteCode({ token, finger }) {
 
         const write = async () => {
           try {
-            const URL = "https://projeto-sacha.onrender.com";
+            const URL = "http://localhost:3001";
 
             const presence = await fetch(
               `${URL}/presences/single/ra?id=${token}&code=${code}`
@@ -217,7 +217,7 @@ export const getServerSideProps = async ({ req, res }) => {
   try {
     let finger = null;
     if (token) {
-      const URL = "https://projeto-sacha.onrender.com";
+      const URL = "http://localhost:3001";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {

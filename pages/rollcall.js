@@ -11,9 +11,7 @@ function RollCall({ token }) {
   useEffect(() => {
     const fetchPresences = async () => {
       try {
-        const response = await fetch(
-          "https://projeto-sacha.onrender.com/presences/all"
-        );
+        const response = await fetch("http://localhost:3001/presences/all");
         if (response.ok) {
           const data = await response.json();
           setPresences(data.presences);
@@ -84,13 +82,13 @@ function EstudantItem({ ra }) {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `https://projeto-sacha.onrender.com/users/single/ra?ra=${ra}`
+          `http://localhost:3001/users/single/ra?ra=${ra}`
         );
         if (response.ok) {
           const data = await response.json();
           setUserData(data.formattedData);
         } else {
-          console.error(`Failed to fetch user data for RA ${ra}`);
+          throw Error("Usuário não encontrado");
         }
       } catch (err) {
         console.error(err);
@@ -106,7 +104,7 @@ function EstudantItem({ ra }) {
         className="alert alert-danger text-start alert-dismissible"
         role="alert"
       >
-        Por enquanto nenhuma presença
+        Nenhuma presença encontrada
       </div>
     );
   }
@@ -145,7 +143,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
   try {
     if (token) {
-      const URL = "https://projeto-sacha.onrender.com";
+      const URL = "http://localhost:3001";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {

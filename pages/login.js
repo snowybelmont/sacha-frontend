@@ -18,7 +18,7 @@ function Login() {
 
     setFormData({
       ...FormData,
-      email: `${emailField.value}`,
+      email: emailField.value,
       password: passwordField.value,
     });
   };
@@ -93,17 +93,26 @@ function Login() {
       }
 
       if (
-        (emailField.value === null || emailField.value === "") &&
-        (passwordField.value === null || passwordField.value === "")
+        (emailField.value === null || emailField.value.trim() === "") &&
+        (passwordField.value === null || passwordField.value.trim() === "")
       ) {
         warnings.push("Os campos não devem estar vazios");
       } else {
-        if (emailField.value === null || emailField.value === "") {
+        if (emailField.value === null || emailField.value.trim() === "") {
           warnings.push("O email não deve ser vazio");
         }
 
-        if (passwordField.value === null || passwordField.value === "") {
+        if (passwordField.value === null || passwordField.value.trim() === "") {
           warnings.push("A senha não deve ser vazia");
+        }
+
+        if (emailField.value !== null && emailField.value.trim() !== "") {
+          if (
+            !emailField.value.includes("@") ||
+            !emailField.value.includes(".")
+          ) {
+            warnings.push("O e-mail digitado é invalido");
+          }
         }
       }
 
@@ -113,7 +122,7 @@ function Login() {
 
       const createUserOrLogin = async () => {
         try {
-          const URL = "https://projeto-sacha.onrender.com";
+          const URL = "http://localhost:3001";
           const response = await fetch(`${URL}/users/create`, {
             method: "POST",
             headers: {
@@ -236,7 +245,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
   try {
     if (token) {
-      const URL = "https://projeto-sacha.onrender.com";
+      const URL = "http://localhost:3001";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {
