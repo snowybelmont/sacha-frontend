@@ -11,7 +11,9 @@ function RollCall({ token }) {
   useEffect(() => {
     const fetchPresences = async () => {
       try {
-        const response = await fetch("http://localhost:3001/presences/all");
+        const response = await fetch(
+          "https://projeto-sacha.onrender.com/presences/all"
+        );
         if (response.ok) {
           const data = await response.json();
           setPresences(data.presences);
@@ -82,7 +84,7 @@ function EstudantItem({ ra }) {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3001/users/single/ra?ra=${ra}`
+          `https://projeto-sacha.onrender.com/users/single/ra?ra=${ra}`
         );
         if (response.ok) {
           const data = await response.json();
@@ -143,7 +145,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
   try {
     if (token) {
-      const URL = "http://localhost:3001";
+      const URL = "https://projeto-sacha.onrender.com";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {
