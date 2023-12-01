@@ -4,6 +4,7 @@ import Fingerprint2 from "fingerprintjs2";
 import { getCookie, setCookie } from "cookies-next";
 import nProgress from "nprogress";
 import Logo from "@/components/Logo";
+import { DateTime } from "luxon";
 
 function WriteCode({ token, finger }) {
   const [Disabled, setDisabled] = useState(false);
@@ -78,17 +79,59 @@ function WriteCode({ token, finger }) {
 
         const write = async () => {
           try {
-            const URL = "https://projeto-sacha.onrender.com";
+            const URL = "http://localhost:3001";
 
             const presence = await fetch(
               `${URL}/presences/single/ra?id=${token}&code=${code}`
             );
 
+            const json = await presence.json();
+
             if (presence.status === 401) {
-              errors.push(
-                "Você já registrou sua presença nesse dispositivo hoje"
-              );
-              throw new Error("Não pode prosseguir");
+              const presenceDate = new Date(json.presence.date_create);
+              const now = DateTime.local().setZone("America/Sao_Paulo");
+
+              const periodOne =
+                (presenceDate.getHours() === 19 &&
+                  presenceDate.getMinutes() >= 0) ||
+                (presenceDate.getHours() === 20 &&
+                  presenceDate.getMinutes() <= 40);
+
+              const nowPeriodOne =
+                (now.hour === 19 && now.minute >= 0) ||
+                (now.hour === 20 && now.minute <= 40);
+
+              const periodTwo =
+                (presenceDate.getHours() === 20 &&
+                  presenceDate.getMinutes() >= 50) ||
+                (presenceDate.getHours >= 21 &&
+                  presenceDate.getMinutes() <= 59) ||
+                (presenceDate.getHours() === 22 &&
+                  presenceDate.getMinutes() <= 30);
+
+              const nowPeriodTwo =
+                (now.hour === 20 && now.minute >= 50) ||
+                (now.hour > 20 && now.hour < 22) ||
+                (now.hour === 22 && now.minute <= 30);
+
+              if (
+                now.hour < 19 ||
+                (now.hour === 20 && now.minute > 40 && now.minute < 50) ||
+                (now.hour === 22 && now.minute > 30) ||
+                now.hour > 22
+              ) {
+                errors.push(
+                  "Você tem que estar no horário  de aula para registrar a presença"
+                );
+                throw new Error("Não pode prosseguir");
+              }
+
+              if ((periodOne && nowPeriodOne) || (periodTwo && nowPeriodTwo)) {
+                errors.push(
+                  "Você já registrou sua presença nesse dispositivo hoje"
+                );
+                throw new Error("Não pode prosseguir");
+              }
             } else if (presence.status !== 200) {
               errors.push("Error ao registrar presença");
               throw new Error("Não pode prosseguir");
@@ -119,7 +162,6 @@ function WriteCode({ token, finger }) {
             }
 
             setDisabled(false);
-            document.getElementById("submit").classList.remove("disabled");
             nProgress.done();
           } catch (err) {
             console.log(err);
@@ -217,7 +259,7 @@ export const getServerSideProps = async ({ req, res }) => {
   try {
     let finger = null;
     if (token) {
-      const URL = "https://projeto-sacha.onrender.com";
+      const URL = "http://localhost:3001";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {

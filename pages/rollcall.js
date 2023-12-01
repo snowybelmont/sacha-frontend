@@ -4,16 +4,14 @@ import { getCookie, setCookie, deleteCookie } from "cookies-next";
 import nProgress from "nprogress";
 import Logo from "@/components/Logo";
 
-function RollCall({ token }) {
+function RollCall() {
   const [presences, setPresences] = useState([]);
   const [Disabled, setDisabled] = useState(false);
 
   useEffect(() => {
     const fetchPresences = async () => {
       try {
-        const response = await fetch(
-          "https://projeto-sacha.onrender.com/presences/all"
-        );
+        const response = await fetch("http://localhost:3001/presences/all");
         if (response.ok) {
           const data = await response.json();
           setPresences(data.presences);
@@ -44,6 +42,38 @@ function RollCall({ token }) {
     }
   };
 
+  if (presences.length < 1) {
+    return (
+      <div className="container py-4 text-center">
+        <div className="container-fluid">
+          <Logo />
+          <div className="d-flex flex-column mb-3">
+            <div
+              className="alert alert-danger text-start alert-dismissible"
+              role="alert"
+            >
+              Nenhuma presença encontrada
+            </div>
+          </div>
+          <div className="d-flex text-center justify-content-center align-items-center">
+            {Disabled ? (
+              <i
+                id="home"
+                className="bi bi-house-door-fill red-text fs-1 disable-icon"
+              ></i>
+            ) : (
+              <i
+                id="home"
+                className="bi bi-house-door-fill red-text fs-1 cursor"
+                onClick={handleClick}
+              ></i>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container py-4 text-center">
       <div className="container-fluid">
@@ -54,6 +84,7 @@ function RollCall({ token }) {
               <EstudantItem
                 key={presence.estudant_RA}
                 ra={presence.estudant_RA}
+                classe={presence.class}
               />
             ))}
           </div>
@@ -77,14 +108,14 @@ function RollCall({ token }) {
   );
 }
 
-function EstudantItem({ ra }) {
+function EstudantItem({ ra, classe }) {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `https://projeto-sacha.onrender.com/users/single/ra?ra=${ra}`
+          `http://localhost:3001/users/single/ra?ra=${ra}`
         );
         if (response.ok) {
           const data = await response.json();
@@ -101,14 +132,7 @@ function EstudantItem({ ra }) {
   }, [ra]);
 
   if (!userData) {
-    return (
-      <div
-        className="alert alert-danger text-start alert-dismissible"
-        role="alert"
-      >
-        Nenhuma presença encontrada
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -129,7 +153,7 @@ function EstudantItem({ ra }) {
             <h5 className="mb-1">{userData.Nome}</h5>
           </div>
           <div className="d-flex justify-content-evenly align-items-center">
-            <small>{userData.Classe[1].substring(8)}</small>
+            <small>{classe ?? "Sem disciplina"}</small>
             <small>|</small>
             <small>{userData.Periodo}</small>
           </div>
@@ -145,7 +169,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
   try {
     if (token) {
-      const URL = "https://projeto-sacha.onrender.com";
+      const URL = "http://localhost:3001";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {
@@ -166,7 +190,7 @@ export const getServerSideProps = async ({ req, res }) => {
       }
 
       return {
-        props: { token },
+        props: {},
       };
     } else {
       throw new Error("Usário não encontrado");
@@ -183,7 +207,7 @@ export const getServerSideProps = async ({ req, res }) => {
   }
 
   return {
-    props: { token },
+    props: {},
   };
 };
 
