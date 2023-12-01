@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { getCookie, setCookie, deleteCookie } from "cookies-next";
 import nProgress from "nprogress";
 import Logo from "@/components/Logo";
+import Image from "next/image";
 
 function RollCall() {
   const [presences, setPresences] = useState([]);
@@ -11,7 +12,9 @@ function RollCall() {
   useEffect(() => {
     const fetchPresences = async () => {
       try {
-        const response = await fetch("http://localhost:3001/presences/all");
+        const response = await fetch(
+          "https://projeto-sacha.onrender.com/presences/all"
+        );
         if (response.ok) {
           const data = await response.json();
           setPresences(data.presences);
@@ -115,7 +118,7 @@ function EstudantItem({ ra, classe }) {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3001/users/single/ra?ra=${ra}`
+          `https://projeto-sacha.onrender.com/users/single/ra?ra=${ra}`
         );
         if (response.ok) {
           const data = await response.json();
@@ -141,8 +144,8 @@ function EstudantItem({ ra, classe }) {
       aria-current="true"
     >
       <div className="d-flex align-items-center justify-content-center">
-        <img
-          src={userData.Foto} // replace with the actual property from your user data
+        <Image
+          src={userData.Foto}
           className="rounded me-3"
           width={100}
           height={100}
@@ -169,7 +172,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
   try {
     if (token) {
-      const URL = "http://localhost:3001";
+      const URL = "https://projeto-sacha.onrender.com";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {

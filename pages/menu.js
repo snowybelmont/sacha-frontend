@@ -51,7 +51,7 @@ function Menu({ returnType }) {
         document.getElementById("generateQR").classList.add("disabled");
         document.getElementById("rollCall").classList.add("disabled");
         try {
-          const URL = "http://localhost:3001";
+          const URL = "https://projeto-sacha.onrender.com";
           const response = await fetch(`${URL}/qrcode/generate`, {
             method: "POST",
             headers: {
@@ -62,7 +62,7 @@ function Menu({ returnType }) {
 
           if (!response.ok) {
             try {
-              const URL = "http://localhost:3001";
+              const URL = "https://projeto-sacha.onrender.com";
               const response = await fetch(`${URL}/users/single?id=${token}`);
 
               if (!response.ok) {
@@ -226,7 +226,7 @@ export const getServerSideProps = async ({ req, res }) => {
 
   try {
     if (token) {
-      const URL = "http://localhost:3001";
+      const URL = "https://projeto-sacha.onrender.com";
       const response = await fetch(`${URL}/users/single?id=${token}`);
 
       if (!response.ok) {
