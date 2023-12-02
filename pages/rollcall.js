@@ -14,6 +14,7 @@ function RollCall() {
   const [selectedPeriod, setSelectedPeriod] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [renderedItems, setRenderedItems] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchUserData = async (ra) => {
     try {
@@ -33,51 +34,58 @@ function RollCall() {
   };
 
   const renderEstudantItems = async () => {
-    const term = searchTerm.toLowerCase();
+    try {
+      setLoading(true);
+      const term = searchTerm.toLowerCase();
 
-    const renderedItems = await Promise.all(
-      filteredPresences.map(async (presence) => {
-        const presenceDate = new Date(presence.date_create);
-        const hours = presenceDate.getHours();
-        const minutes = presenceDate.getMinutes();
+      const renderedItems = await Promise.all(
+        filteredPresences.map(async (presence) => {
+          const presenceDate = new Date(presence.date_create);
+          const hours = presenceDate.getHours();
+          const minutes = presenceDate.getMinutes();
 
-        const userData = await fetchUserData(presence.estudant_RA);
+          const userData = await fetchUserData(presence.estudant_RA);
 
-        if (!userData) {
+          if (!userData) {
+            return null;
+          }
+
+          const estudantName = userData.Nome.toLowerCase();
+
+          if (
+            (selectedPeriod === "Selecione um período" ||
+              (selectedPeriod === "1º Período" &&
+                (hours === 19 || (hours === 20 && minutes <= 40))) ||
+              (selectedPeriod === "2º Período" &&
+                hours === 20 &&
+                minutes >= 50) ||
+              (selectedPeriod === "2º Período" &&
+                hours === 22 &&
+                minutes <= 30)) &&
+            estudantName.includes(term)
+          ) {
+            return (
+              <EstudantItem
+                key={`${presence.estudant_RA}_${formatDate(
+                  presence.date_create
+                )}`}
+                ra={presence.estudant_RA}
+                classe={presence.class}
+                userData={userData}
+              />
+            );
+          }
+
           return null;
-        }
+        })
+      );
 
-        const estudantName = userData.Nome.toLowerCase();
-
-        if (
-          (selectedPeriod === "Selecione um período" ||
-            (selectedPeriod === "1º Período" &&
-              (hours === 19 || (hours === 20 && minutes <= 40))) ||
-            (selectedPeriod === "2º Período" &&
-              hours === 20 &&
-              minutes >= 50) ||
-            (selectedPeriod === "2º Período" &&
-              hours === 22 &&
-              minutes <= 30)) &&
-          estudantName.includes(term)
-        ) {
-          return (
-            <EstudantItem
-              key={`${presence.estudant_RA}_${formatDate(
-                presence.date_create
-              )}`}
-              ra={presence.estudant_RA}
-              classe={presence.class}
-              userData={userData}
-            />
-          );
-        }
-
-        return null;
-      })
-    );
-
-    setRenderedItems(renderedItems.filter((item) => item !== null));
+      setRenderedItems(renderedItems.filter((item) => item !== null));
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -152,19 +160,16 @@ function RollCall() {
     }
   }, [selectedDate, presences, selectedPeriod, searchTerm]);
 
-  const handleDateChange = async (date) => {
+  const handleDateChange = (date) => {
     setSelectedDate(date);
-    await renderEstudantItems();
   };
 
-  const handlePeriodChange = async (event) => {
+  const handlePeriodChange = (event) => {
     setSelectedPeriod(event.target.value);
-    await renderEstudantItems();
   };
 
-  const handleInputChange = async (event) => {
+  const handleInputChange = (event) => {
     setSearchTerm(event.target.value.toLowerCase());
-    await renderEstudantItems();
   };
 
   const formatDate = (inputDate) => {
@@ -195,12 +200,53 @@ function RollCall() {
     }
   };
 
-  if (presences.length < 1) {
+  if (presences.length < 1 || filteredPresences.length < 1) {
     return (
       <div className="container py-4 text-center">
         <div className="container-fluid">
           <Logo />
-          <div className="d-flex flex-column mb-3">
+          <div className="d-flex flex-column justify-content align-items-center mb-3">
+            <div className="d-flex flex-column flex-md-row">
+              <div className="mb-3 mb-md-0">
+                <DatePicker
+                  className="form-select form-select-lg w-100"
+                  placeholderText="Selecione uma data"
+                  selected={selectedDate}
+                  onChange={handleDateChange}
+                  dateFormat="dd/MM/yyyy"
+                />
+              </div>
+              <div className="mb-3 ms-md-3">
+                <select
+                  id="periodSelect"
+                  className="form-select form-select-lg w-100"
+                  aria-label="Large select example"
+                  onChange={handlePeriodChange}
+                >
+                  <option defaultValue="0" selected>
+                    Selecione um período
+                  </option>
+                  <option defaultValue="1">1º Período</option>
+                  <option defaultValue="2">2º Período</option>
+                </select>
+              </div>
+            </div>
+            <div className="input-group mb-3">
+              <div className="form-floating">
+                <input
+                  type="text"
+                  className="form-control w-100"
+                  id="floatingInputGroup1"
+                  placeholder="Procurar um aluno"
+                  value={searchTerm}
+                  onChange={handleInputChange}
+                />
+                <label htmlFor="floatingInputGroup1">Procurar um aluno</label>
+              </div>
+              <span className="input-group-text">
+                <i className="bi bi-search fw-bold red-text"></i>
+              </span>
+            </div>
             <div
               className="alert alert-danger text-start alert-dismissible"
               role="alert"
@@ -274,7 +320,16 @@ function RollCall() {
             </span>
           </div>
           <div id="list" className="list-group">
-            {renderedItems}
+            {loading ? (
+              <div className="text-center my-4">
+                <div className="spinner-border text-danger" role="status">
+                  <span className="visually-hidden">Carregando...</span>
+                </div>
+                <p>Buscando dados...</p>
+              </div>
+            ) : (
+              renderedItems
+            )}
           </div>
           <div className="d-flex text-center justify-content-center align-items-center">
             {Disabled ? (
