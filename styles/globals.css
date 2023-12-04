@@ -46,7 +46,9 @@ svg {
 
 #home,
 #refresh,
-#backi {
+#backi,
+#addPerson,
+#removePerson {
     font-size: 3em !important;
 }
 
@@ -58,4 +60,14 @@ svg {
 
 .no-b-top {
     border-top: none !important;
+}
+
+.list-group-item.active {
+    background-color: #ff3434 !important;
+    border-color: #f46363 !important;
+}
+
+.form-check-input:checked {
+    background-color: #ff3434 !important;
+    border-color: transparent !important;
 }

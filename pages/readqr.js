@@ -229,10 +229,7 @@ const ReadQRCode = ({ token, finger }) => {
         if (errors.length > 0 || warnings.length > 0) {
           displayAlert(errors, warnings);
 
-          if (
-            errors[0] === "Nenhum tipo definido. Recarregue a página!" ||
-            errors[0] === "Permissão de Geolocalização não encontrada!"
-          ) {
+          if (errors[0] === "Nenhum tipo definido. Recarregue a página!") {
             nProgress.done();
             return;
           } else if (

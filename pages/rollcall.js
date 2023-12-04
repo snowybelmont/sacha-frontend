@@ -16,6 +16,8 @@ function RollCall() {
   const [renderedItems, setRenderedItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  useEffect;
+
   const fetchUserData = async (ra) => {
     try {
       const response = await fetch(
@@ -197,6 +199,62 @@ function RollCall() {
         console.log(err);
         setDisabled(false);
       }
+    } else if (event.target.id === "addPerson") {
+      try {
+        nProgress.done();
+      } catch (err) {
+        console.log(err);
+        setDisabled(false);
+      }
+    } else if (event.target.id === "removePerson") {
+      try {
+        const handleRemovePersonClick = async () => {
+          try {
+            const presencesToRemove = presences.filter(
+              (presence) => presence.isChecked
+            );
+            console.log(presencesToRemove);
+
+            const data = presencesToRemove.map((presence) => ({
+              ra: presence.estudant_RA,
+              code: presence.code,
+              date: presence.date_create,
+            }));
+
+            console.log(data);
+            nProgress.done();
+
+            /*const response = await fetch(
+              "https://projeto-sacha.onrender.com/presences/delete",
+              {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ data }),
+              }
+            );
+
+            if (response.ok) {
+              const updatedPresences = presences.filter(
+                (presence) => !presence.isChecked
+              );
+
+              setPresences(updatedPresences);
+            } else {
+              console.error("Falha ao excluir presenças");
+            }*/
+          } catch (error) {
+            console.error(error);
+            nProgress.done();
+          }
+        };
+
+        handleRemovePersonClick();
+      } catch (err) {
+        console.log(err);
+        setDisabled(false);
+      }
     }
   };
 
@@ -258,15 +316,23 @@ function RollCall() {
             {Disabled ? (
               <i
                 id="home"
-                className="bi bi-house-door-fill red-text fs-1 disable-icon"
+                className="bi bi-house-door-fill red-text me-3 fs-1 disable-icon"
               ></i>
             ) : (
               <i
                 id="home"
-                className="bi bi-house-door-fill red-text fs-1 cursor"
+                className="bi bi-house-door-fill red-text me-3 fs-1 cursor"
                 onClick={handleClick}
               ></i>
             )}
+            <i
+              id="addPerson"
+              className="bi bi-person-fill-add red-text me-3 fs-1 disable-icon"
+            ></i>
+            <i
+              id="removePerson"
+              className="bi bi-trash-fill red-text fs-1 disable-icon"
+            ></i>
           </div>
         </div>
       </div>
@@ -319,7 +385,7 @@ function RollCall() {
               <i className="bi bi-search fw-bold red-text"></i>
             </span>
           </div>
-          <div id="list" className="list-group">
+          <div id="list" className="list-group mb-3">
             {loading ? (
               <div className="text-center my-4">
                 <div className="spinner-border text-danger" role="status">
@@ -335,15 +401,23 @@ function RollCall() {
             {Disabled ? (
               <i
                 id="home"
-                className="bi bi-house-door-fill red-text fs-1 disable-icon"
+                className="bi bi-house-door-fill red-text fs-1 me-3 disable-icon"
               ></i>
             ) : (
               <i
                 id="home"
-                className="bi bi-house-door-fill red-text fs-1 cursor"
+                className="bi bi-house-door-fill red-text fs-1 me-3 cursor"
                 onClick={handleClick}
               ></i>
             )}
+            <i
+              id="addPerson"
+              className="bi bi-person-fill-add red-text me-3 fs-1 disable-icon"
+            ></i>
+            <i
+              id="removePerson"
+              className="bi bi-trash-fill red-text fs-1 disable-icon"
+            ></i>
           </div>
         </div>
       </div>
@@ -353,6 +427,11 @@ function RollCall() {
 
 function EstudantItem({ ra, classe }) {
   const [userData, setUserData] = useState(null);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleClick = () => {
+    setIsChecked(!isChecked);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -380,25 +459,39 @@ function EstudantItem({ ra, classe }) {
 
   return (
     <a
-      className="list-group-item list-group-item-action bg"
+      className={`list-group-item list-group-item-action ${
+        isChecked ? "active" : ""
+      }`}
       aria-current="true"
+      onClick={handleClick}
     >
-      <div className="d-flex flex-column flex-md-row align-items-center justify-content-center">
-        <img
-          src={userData.Foto}
-          className="rounded me-3 mb-3 mb-md-0"
-          width={100}
-          height={100}
-          alt={"Foto do Estudante"}
-        />
-        <div className="">
-          <div className="d-flex w-100 justify-content-between">
-            <h5 className="mb-1">{userData.Nome}</h5>
-          </div>
-          <div className="d-flex flex-column flex-md-row justify-content-evenly align-items-center">
-            <small>{classe ?? "Sem disciplina"}</small>
-            <small>|</small>
-            <small>{userData.Periodo}</small>
+      <div className="d-flex align-items-center">
+        <div className="form-check ms-2">
+          <input
+            className="form-check-input fs-4"
+            type="checkbox"
+            id={`checkbox_${ra}`}
+            checked={isChecked}
+            onChange={() => {}}
+          />
+        </div>
+        <div className="d-flex flex-column flex-md-row align-items-center justify-content-center">
+          <img
+            src={userData.Foto}
+            className="rounded me-3 mb-3 mb-md-0"
+            width={100}
+            height={100}
+            alt={"Foto do Estudante"}
+          />
+          <div className="">
+            <div className="d-flex w-100 justify-content-between">
+              <h5 className="mb-1">{userData.Nome}</h5>
+            </div>
+            <div className="d-flex flex-column flex-md-row justify-content-evenly align-items-center">
+              <small>{classe ?? "Sem disciplina"}</small>
+              <small>|</small>
+              <small>{userData.Periodo}</small>
+            </div>
           </div>
         </div>
       </div>
